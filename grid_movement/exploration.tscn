@@ -29,10 +29,11 @@
 [ext_resource type="Texture2D" uid="uid://ev5p5wpyw2ke" path="res://decoration/flower_variant_upperlevel.png" id="23"]
 [ext_resource type="Texture2D" uid="uid://cw0o0unwt13k6" path="res://decoration/flower_upperlevel.png" id="24"]
 [ext_resource type="Texture2D" uid="uid://jjitxml2ve26" path="res://decoration/bush.png" id="25"]
-[ext_resource type="Script" path="res://grid_movement/exploration_generator.gd" id="26_generator"]
+[ext_resource type="Script" path="res://grid_movement/room_manager.gd" id="26_room_manager"]
+[ext_resource type="Script" path="res://grid_movement/minimap.gd" id="27_minimap"]
 
 [node name="Exploration" type="Node2D" unique_id=633237882]
-script = ExtResource("26_generator")
+script = ExtResource("26_room_manager")
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=591932895]
 use_parent_material = true
@@ -1870,6 +1871,19 @@ position = Vector2(537, 710)
 scale = Vector2(0.7, 0.7)
 texture = ExtResource("19")
 
+[node name="DungeonMinimap" type="Control" parent="."]
+z_index = 50
+position = Vector2(1050, 18)
+size = Vector2(180, 180)
+mouse_filter = 2
+script = ExtResource("27_minimap")
+
+[node name="RoomTransition" type="ColorRect" parent="."]
+z_index = 100
+position = Vector2(-10, -10)
+size = Vector2(1300, 740)
+mouse_filter = 2
+color = Color(0.02, 0.03, 0.06, 0)
 [node name="DialogueCanvas" type="CanvasLayer" parent="." unique_id=1168286489]
 
 [node name="DialogueUI" parent="DialogueCanvas" unique_id=1631097714 instance=ExtResource("10")]
