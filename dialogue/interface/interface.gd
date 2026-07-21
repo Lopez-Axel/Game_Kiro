@@ -38,3 +38,8 @@ func _on_dialogue_finished(player: Pawn) -> void:
 	dialogue_node.dialogue_finished.disconnect(player.set_active)
 	dialogue_node.dialogue_finished.disconnect(hide)
 	dialogue_node.dialogue_finished.disconnect(_on_dialogue_finished)
+	if not dialogue_node.is_inside_tree():
+		return
+	var grid: Node = dialogue_node.get_parent()
+	if grid and grid is Grid:
+		dialogue_node.queue_free()

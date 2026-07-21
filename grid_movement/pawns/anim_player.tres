@@ -2,7 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://dsg2ebrj67yyv" path="res://grid_movement/pawns/player_exploration_bump.png" id="1_j46su"]
 [ext_resource type="Texture2D" uid="uid://c7b3o76ihu07e" path="res://grid_movement/pawns/player_exploration3.png" id="2_j46su"]
-[ext_resource type="Texture2D" uid="uid://ddt4apnx1xoi2" path="res://grid_movement/pawns/player_exploration.png" id="4_bqajb"]
 [ext_resource type="Texture2D" uid="uid://b7do5hw1w4ur4" path="res://grid_movement/pawns/player_exploration_left.png" id="4_vs3rj"]
 
 [resource]
@@ -49,7 +48,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("4_bqajb")
+"texture": ExtResource("2_j46su")
 }],
 "loop": 0,
 "name": &"up",

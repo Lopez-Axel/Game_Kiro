@@ -11,6 +11,8 @@ func _ready() -> void:
 	combat_screen.combat_finished.connect(_on_combat_finished)
 
 	for n in $Exploration/Grid.get_children():
+		if not n is Pawn:
+			continue
 		if not n.type == CellType.Type.ACTOR:
 			continue
 		if not n.has_node(^"DialoguePlayer"):
@@ -33,7 +35,8 @@ func start_combat(combat_actors: Array[PackedScene]) -> void:
 func _on_opponent_dialogue_finished(opponent: Pawn) -> void:
 	if opponent.lost:
 		return
-	var player: Node2D = $Exploration/Grid/Player
+	var players := get_tree().get_nodes_in_group("players")
+	var player: Node2D = players[0] if players.size() > 0 else $Exploration/Grid.get_children().filter(func(n): return n is Walker and n.owner_peer_id >= 0)[0]
 	var combatants: Array[PackedScene] = [player.combat_actor, opponent.combat_actor]
 	start_combat(combatants)
 
@@ -50,8 +53,10 @@ func _on_combat_finished(winner: Combatant, _loser: Combatant) -> void:
 		dialogue.dialogue_file = PLAYER_LOSE
 
 	await $AnimationPlayer.animation_finished
-	var player: Pawn = $Exploration/Grid/Player
-	exploration_screen.get_node(^"DialogueCanvas/DialogueUI").show_dialogue(player, dialogue)
+	var players := get_tree().get_nodes_in_group("players")
+	var player: Pawn = players[0] if players.size() > 0 else null
+	if player:
+		exploration_screen.get_node(^"DialogueCanvas/DialogueUI").show_dialogue(player, dialogue)
 	combat_screen.clear_combat()
 	await dialogue.dialogue_finished
 	dialogue.queue_free()

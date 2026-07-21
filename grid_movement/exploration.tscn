@@ -640,30 +640,10 @@ tile_set = ExtResource("2")
 script = ExtResource("3")
 dialogue_ui = NodePath("../DialogueCanvas/DialogueUI")
 
-[node name="Player" parent="Grid" unique_id=1369758959 instance=ExtResource("4")]
-z_index = 0
-position = Vector2(224, 288)
-script = ExtResource("14_dg62l")
-combat_actor = ExtResource("5")
-pose_anims = ExtResource("15_qps0g")
-
-[node name="Opponent" parent="Grid" unique_id=961183516 instance=ExtResource("4")]
-position = Vector2(800, 480)
-script = ExtResource("6")
-combat_actor = ExtResource("7")
-pose_anims = ExtResource("18_dg62l")
-
-[node name="DialoguePlayer" parent="Grid/Opponent" unique_id=459637038 instance=ExtResource("8")]
-dialogue_file = "res://dialogue/dialogue_data/npc.json"
-
-[node name="Sprite2D" type="Sprite2D" parent="Grid/Opponent" unique_id=931415827]
-visible = false
-texture = ExtResource("14")
-
 [node name="Object" type="Node2D" parent="Grid" unique_id=1438057093]
 position = Vector2(544, 288)
 script = ExtResource("9_key")
-type = 2
+type = -1
 
 [node name="DialoguePlayer" parent="Grid/Object" unique_id=1157089401 instance=ExtResource("8")]
 dialogue_file = "res://dialogue/dialogue_data/object.json"

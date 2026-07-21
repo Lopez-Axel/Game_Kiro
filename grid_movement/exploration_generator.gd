@@ -1,17 +1,23 @@
 class_name ExplorationGenerator
 extends Node2D
 
-## El mapa se crea al cargar la escena. Cada recorrido conecta el inicio,
-## el objeto y el rival, por lo que nunca se generan objetivos aislados.
 const MAP_WIDTH := 20
 const MAP_HEIGHT := 10
 const CORRIDOR_HALF_WIDTH := 1
 
+const PLAYER_SCENE := preload("res://grid_movement/pawns/character.tscn")
+const PLAYER_SCRIPT := preload("res://grid_movement/pawns/player.gd")
+const AI_SCRIPT := preload("res://grid_movement/pawns/ai_wanderer.gd")
+const OPPONENT_SCRIPT := preload("res://grid_movement/pawns/opponent.gd")
+const OPPONENT_COMBAT := preload("res://combat/combatants/opponent.tscn")
+const PLAYER_COMBAT := preload("res://combat/combatants/player.tscn")
+
+const PLAYER_POSE := preload("res://grid_movement/pawns/anim_player.tres")
+const OPPONENT_POSE := preload("res://grid_movement/pawns/anim_opponent.tres")
+
 @onready var ground: TileMapLayer = $Ground
 @onready var pathways: TileMapLayer = $Pathways
 @onready var grid: Grid = $Grid
-@onready var player: Node2D = $Grid/Player
-@onready var opponent: Node2D = $Grid/Opponent
 @onready var key_item: Node2D = $Grid/Object
 
 var rng := RandomNumberGenerator.new()
@@ -19,10 +25,15 @@ var walkable: Dictionary = {}
 
 
 func _ready() -> void:
-	rng.randomize()
+	if not NetworkManager.map_seed:
+		NetworkManager.map_seed = randi()
+	seed(NetworkManager.map_seed)
+	rng.seed = NetworkManager.map_seed
 	$Decoration.hide()
 	$"Decoration upper level".hide()
 	_generate_map()
+	_spawn_pawns()
+	_clean_templates()
 
 
 func _generate_map() -> void:
@@ -31,8 +42,6 @@ func _generate_map() -> void:
 	pathways.clear()
 	walkable.clear()
 
-	# La secuencia de puntos convierte el mapa en una pequeña aventura:
-	# aparecer -> conseguir objeto -> enfrentarse al rival.
 	var start := Vector2i(2, rng.randi_range(2, MAP_HEIGHT - 3))
 	var item := Vector2i(MAP_WIDTH / 2, rng.randi_range(2, MAP_HEIGHT - 3))
 	var enemy := Vector2i(MAP_WIDTH - 3, rng.randi_range(2, MAP_HEIGHT - 3))
@@ -44,7 +53,7 @@ func _generate_map() -> void:
 	_add_optional_branches()
 	_draw_walkable_terrain()
 	_draw_boundaries_and_obstacles()
-	_place_pawns(start, item, enemy)
+	key_item.position = grid.map_to_local(item)
 
 
 func _fill_ground() -> void:
@@ -104,10 +113,85 @@ func _draw_boundaries_and_obstacles() -> void:
 				grid.set_cell(cell, CellType.Type.OBSTACLE, Vector2i.ZERO, rng.randi_range(0, 7))
 
 
-func _place_pawns(start: Vector2i, item: Vector2i, enemy: Vector2i) -> void:
-	player.position = grid.map_to_local(start)
-	key_item.position = grid.map_to_local(item)
-	opponent.position = grid.map_to_local(enemy)
-	grid.set_cell(start, CellType.Type.ACTOR, Vector2i.ZERO)
-	grid.set_cell(item, CellType.Type.OBJECT, Vector2i.ZERO)
-	grid.set_cell(enemy, CellType.Type.ACTOR, Vector2i.ZERO)
+func _spawn_pawns() -> void:
+	var spawn_points := _calculate_spawn_points(4)
+	var peer_ids: Array = NetworkManager.players.keys()
+	peer_ids.sort()
+
+	for i in range(4):
+		var pos: Vector2 = grid.map_to_local(spawn_points[i])
+		if i < peer_ids.size():
+			var peer_id: int = peer_ids[i]
+			var is_ai: bool = NetworkManager.players[peer_id].get("is_ai", false)
+			if is_ai:
+				_spawn_character(pos, peer_id, true)
+			else:
+				_spawn_character(pos, peer_id, false)
+		else:
+			_spawn_character(pos, -(i + 1), true)
+
+	key_item.type = CellType.Type.OBJECT
+	grid.set_cell(grid.local_to_map(key_item.position), CellType.Type.OBJECT, Vector2i.ZERO)
+
+
+func _calculate_spawn_points(count: int) -> Array:
+	var cells: Array = walkable.keys()
+	cells.sort()
+	var start_cell: Vector2i = cells[0]
+	var result: Array = [start_cell]
+	var min_dist := 3
+
+	for cell in cells:
+		if result.size() >= count:
+			break
+		var valid := true
+		for existing in result:
+			var diff: Vector2i = (cell - Vector2i(existing)).abs()
+			if maxi(diff.x, diff.y) < min_dist:
+				valid = false
+				break
+		if valid:
+			result.append(cell)
+
+	while result.size() < count:
+		result.append(cells[result.size() % cells.size()])
+	return result
+
+
+func _spawn_character(pos: Vector2, peer_id: int, is_ai: bool) -> void:
+	var spawned_pawn: Walker = PLAYER_SCENE.instantiate()
+	if is_ai:
+		spawned_pawn.set_script(AI_SCRIPT)
+		spawned_pawn.pose_anims = OPPONENT_POSE
+		spawned_pawn.combat_actor = OPPONENT_COMBAT
+	else:
+		spawned_pawn.set_script(PLAYER_SCRIPT)
+		spawned_pawn.pose_anims = PLAYER_POSE
+		spawned_pawn.combat_actor = PLAYER_COMBAT
+	spawned_pawn.owner_peer_id = peer_id
+	spawned_pawn.position = pos
+	spawned_pawn.add_to_group("players")
+
+	var anim_tree: AnimationTree = spawned_pawn.get_node_or_null(^"AnimationTree")
+	if anim_tree:
+		anim_tree.active = true
+	spawned_pawn.get_node(^"Pivot/Slime").sprite_frames = spawned_pawn.pose_anims
+
+	if is_ai:
+		var dp_scene := preload("res://dialogue/dialogue_player/dialogue_player.tscn")
+		var dp: Node = dp_scene.instantiate()
+		dp.name = &"DialoguePlayer"
+		dp.dialogue_file = "res://dialogue/dialogue_data/npc.json"
+		spawned_pawn.add_child(dp)
+
+	grid.add_child(spawned_pawn)
+	grid.register_pawn(peer_id, spawned_pawn)
+
+
+func _clean_templates() -> void:
+	var player_template: Node = grid.get_node_or_null(^"Player")
+	if player_template:
+		player_template.queue_free()
+	var opponent_template: Node = grid.get_node_or_null(^"Opponent")
+	if opponent_template:
+		opponent_template.queue_free()

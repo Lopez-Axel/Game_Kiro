@@ -15,9 +15,13 @@ config/description="This shows a method of creating grid-based movement with God
 and GDScript. It also includes a simple JRPG-style dialogue and
 battle system on top of it."
 config/tags=PackedStringArray("2d", "demo", "gui", "official", "tilemap")
-run/main_scene="res://game.tscn"
+run/main_scene="res://ui/lobby.tscn"
 config/features=PackedStringArray("4.7")
 config/icon="res://icon.svg"
+
+[autoload]
+
+NetworkManager="*res://shared/network_manager.gd"
 
 [debug]
 

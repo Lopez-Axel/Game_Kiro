@@ -9,7 +9,7 @@ var lost: bool = false
 var grid_size: float
 var speed_multiplier: float = 1.0
 
-@onready var grid : Grid = get_parent()
+var grid: Grid = null
 @onready var animation_playback: AnimationNodeStateMachinePlayback = $AnimationTree.get(&"parameters/playback")
 @onready var walk_animation_time: float = $AnimationPlayer.get_animation(&"walk").length
 @onready var pose := $Pivot/Slime
@@ -18,7 +18,9 @@ var speed_multiplier: float = 1.0
 func _ready() -> void:
 	pose.sprite_frames = pose_anims
 	update_look_direction(Vector2.RIGHT)
-	grid_size = grid.tile_set.tile_size.x
+	grid = get_parent() as Grid
+	if grid:
+		grid_size = grid.tile_set.tile_size.x
 
 
 func update_look_direction(direction: Vector2) -> void:
