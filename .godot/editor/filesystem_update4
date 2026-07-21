@@ -1,9 +1,0 @@
-res://grid_movement/pawns/character.tscn
-res://grid_movement/pawns/anim_player.tres
-res://theme/theme.tres
-res://decoration/wind_sway.tres
-res://grid_movement/grid/tiles/grid_tileset.tres
-res://grid_movement/grid/tiles/ground_tileset.tres
-res://grid_movement/grid/tiles/pathways.tres
-res://grid_movement/grid/grid.gd
-res://grid_movement/pawns/walker.gd

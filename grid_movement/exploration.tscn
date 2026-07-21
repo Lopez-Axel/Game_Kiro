@@ -29,8 +29,10 @@
 [ext_resource type="Texture2D" uid="uid://ev5p5wpyw2ke" path="res://decoration/flower_variant_upperlevel.png" id="23"]
 [ext_resource type="Texture2D" uid="uid://cw0o0unwt13k6" path="res://decoration/flower_upperlevel.png" id="24"]
 [ext_resource type="Texture2D" uid="uid://jjitxml2ve26" path="res://decoration/bush.png" id="25"]
+[ext_resource type="Script" path="res://grid_movement/exploration_generator.gd" id="26_generator"]
 
 [node name="Exploration" type="Node2D" unique_id=633237882]
+script = ExtResource("26_generator")
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=591932895]
 use_parent_material = true
