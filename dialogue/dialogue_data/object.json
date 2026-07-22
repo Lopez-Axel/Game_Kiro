@@ -1,3 +1,5 @@
 {
-	"dialog_1" : { "name": "PLAYER", "text": "A magic key! I feel faster already!" }
+	"dialog_1": { "name": "PLAYER", "text": "What's this shimmering over there...?" },
+	"dialog_2": { "name": "PLAYER", "text": "A Crystal Key! I can feel its energy surging through me." },
+	"dialog_3": { "name": "PLAYER", "text": "This must be the key to unlocking the maze's secrets. I feel stronger already!" }
 }

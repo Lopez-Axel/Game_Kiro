@@ -4,6 +4,9 @@ extends TileMapLayer
 @export var dialogue_ui: Node
 
 var peer_pawns: Dictionary = {}
+var room_width: int = 20
+var room_height: int = 10
+var current_room_cells: Array = []
 
 func _ready() -> void:
 	for child in get_children():
@@ -36,6 +39,10 @@ func unregister_pawn(peer_id: int) -> void:
 	peer_pawns.erase(peer_id)
 
 
+func set_current_room(cells: Array) -> void:
+	current_room_cells = cells
+
+
 @rpc("any_peer", "call_local", "reliable")
 func request_move(direction: Vector2) -> void:
 	if not multiplayer.is_server():
@@ -51,6 +58,10 @@ func _apply_move(pawn: Pawn, direction: Vector2, peer_id: int) -> void:
 	var dir_i := Vector2i(direction)
 	var cell_target := cell_start + dir_i
 	var target_pos := pawn.position
+
+	if cell_target.x < 0 or cell_target.x >= room_width or cell_target.y < 0 or cell_target.y >= room_height:
+		move_confirmed.rpc(peer_id, pawn.position, direction)
+		return
 
 	var cell_tile_id := get_cell_source_id(cell_target)
 	match cell_tile_id:

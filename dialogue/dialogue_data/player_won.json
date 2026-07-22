@@ -1,3 +1,5 @@
 {
-	"dialog_1" : { "name": "OPPONENT", "text": "Congratulations, you won!" }
+	"dialog_1": { "name": "GROUNDBREAKER", "text": "Impossible... how did you..." },
+	"dialog_2": { "name": "GROUNDBREAKER", "text": "You truly are stronger than I anticipated." },
+	"dialog_3": { "name": "PLAYER", "text": "The maze is ours now. Let's find the way out!" }
 }

@@ -1,0 +1,6 @@
+{
+	"dialog_1": { "name": "SCOUT", "text": "Hey there, fellow explorer!" },
+	"dialog_2": { "name": "SCOUT", "text": "I mapped out most of this maze already. The rooms are all connected in a strange pattern." },
+	"dialog_3": { "name": "SCOUT", "text": "My advice? Head south first. The treasures are always in the hidden paths." },
+	"dialog_4": { "name": "SCOUT", "text": "And watch out for the Groundbreaker in the final room. He's no joke!" }
+}

@@ -1,3 +1,5 @@
 {
-	"dialog_1" : { "name": "OPPONENT", "text": "Aha! I won, maybe you can try again next time." }
+	"dialog_1": { "name": "GROUNDBREAKER", "text": "Hmph. You lack the strength to defeat me." },
+	"dialog_2": { "name": "GROUNDBREAKER", "text": "Train harder, challenger. I'll be waiting." },
+	"dialog_3": { "name": "PLAYER", "text": "I won't give up... next time will be different!" }
 }

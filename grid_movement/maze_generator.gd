@@ -4,8 +4,11 @@ extends RefCounted
 var rng := RandomNumberGenerator.new()
 
 
-func generate(width: int, height: int, directions: Dictionary) -> Dictionary:
-	rng.randomize()
+func generate(width: int, height: int, directions: Dictionary, seed_value: int = -1, room_index: int = 0) -> Dictionary:
+	if seed_value >= 0:
+		rng.seed = seed_value + room_index * 7919
+	else:
+		rng.randomize()
 	var cells := _make_walls(width, height)
 	_carve_depth_first_maze(cells, width, height)
 	_add_open_areas(cells, width, height)

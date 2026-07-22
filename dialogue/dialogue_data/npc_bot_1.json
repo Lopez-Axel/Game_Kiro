@@ -1,0 +1,6 @@
+{
+	"dialog_1": { "name": "WANDERER", "text": "Oh! Didn't see you there." },
+	"dialog_2": { "name": "WANDERER", "text": "I've been exploring these corridors for a while now." },
+	"dialog_3": { "name": "WANDERER", "text": "Be careful in the deeper rooms... there's something dangerous lurking there." },
+	"dialog_4": { "name": "WANDERER", "text": "If you find a magic key, hold on to it. You'll need it." }
+}
