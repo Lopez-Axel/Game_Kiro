@@ -110,7 +110,8 @@ func _draw_boundaries_and_obstacles() -> void:
 		for x in range(-1, MAP_WIDTH + 1):
 			var cell := Vector2i(x, y)
 			if x == -1 or x == MAP_WIDTH or y == -1 or y == MAP_HEIGHT or not walkable.has(cell):
-				grid.set_cell(cell, CellType.Type.OBSTACLE, Vector2i.ZERO, rng.randi_range(0, 7))
+				# Los tiles de obstáculo no se rotan: se colocan siempre en su alternativa 0.
+				grid.set_cell(cell, CellType.Type.OBSTACLE, Vector2i.ZERO, 0)
 
 
 func _spawn_pawns() -> void:

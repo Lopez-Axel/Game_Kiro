@@ -71,6 +71,15 @@ static func resolve_path(cell: Vector2i, cells: Array, width: int, height: int, 
 
 
 static func resolve_obstacle(cell: Vector2i, cells: Array, width: int, height: int, rng: RandomNumberGenerator) -> Dictionary:
+	# Los tiles de obstáculo (obstacle.png, obstacle_corner*.png, obstacle_edge.png,
+	# obstacle_grass.png, obstacle_wall*.png, rock.png) no deben rotarse: se muestran
+	# tal cual. Se conserva la selección de "source", pero se fuerza alternative = 0.
+	var result: Dictionary = _resolve_obstacle_source(cell, cells, width, height, rng)
+	result["alternative"] = 0
+	return result
+
+
+static func _resolve_obstacle_source(cell: Vector2i, cells: Array, width: int, height: int, rng: RandomNumberGenerator) -> Dictionary:
 	var x := cell.x
 	var y := cell.y
 	var n_wall := is_wall(cells, x, y - 1, width, height)
